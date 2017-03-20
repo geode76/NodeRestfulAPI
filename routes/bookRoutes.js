@@ -64,10 +64,32 @@ var routes = function(Book){
                 }
             });
         })
-        .patch(function(req,res){
+        .patch(function(req, res){
+            if(req.body._id)
+                delete req.body._id;
 
+            for(var p in req.body)
+            {
+                req.book[p] = req.body[p];
+            }
+            
+            req.book.save(function(err){
+                if(err)
+                    res.status(500).send(err);
+                else{
+                    res.json(req.book);
+                }
+            });
+        })
+        .delete(function(req, res){
+            req.book.remove(function(err){
+                if(err)
+                    res.status(500).send(err);
+                else{
+                    res.status(204).send('Removed');
+                }
+            });
         });
-
     return bookRouter;
 };
 
