@@ -9,7 +9,7 @@ var routes = function(Book){
         .post(bookController.post)
         .get(bookController.get);
 
-    bookRouter.use('/:bookId', function(req,res,next){
+    bookRouter.use('/:bookId', function(req, res, next){
         Book.findById(req.params.bookId, function(err,book){
             if(err)
                 res.status(500).send(err);
@@ -25,12 +25,12 @@ var routes = function(Book){
         });
     });
     bookRouter.route('/:bookId')
-        .get(function(req,res){
+        .get(function(req, res){
 
             res.json(req.book);
 
         })
-        .put(function(req,res){
+        .put(function(req, res){
             req.book.title = req.body.title;
             req.book.author = req.body.author;
             req.book.genre = req.body.genre;
@@ -43,7 +43,7 @@ var routes = function(Book){
                 }
             });
         })
-        .patch(function(req,res){
+        .patch(function(req, res){
             if(req.body._id)
                 delete req.body._id;
 
@@ -60,7 +60,7 @@ var routes = function(Book){
                 }
             });
         })
-        .delete(function(req,res){
+        .delete(function(req, res){
             req.book.remove(function(err){
                 if(err)
                     res.status(500).send(err);
