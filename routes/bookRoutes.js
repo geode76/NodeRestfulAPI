@@ -4,34 +4,13 @@ var express = require('express');
 var routes = function(Book){
     var bookRouter = express.Router();
 
+    var bookController = require('../Controllers/bookController')(Book)
     bookRouter.route('/')
-        .post(function(req, res){
-            var book = new Book(req.body);
+        .post(bookController.post)
+        .get(bookController.get);
 
-
-            book.save();
-            res.status(201).send(book);
-
-        })
-        .get(function(req,res){
-
-            var query = {};
-
-            if(req.query.genre)
-            {
-                query.genre = req.query.genre;
-            }
-            Book.find(query, function(err, books){
-                if(err)
-                    res.status(500).send(err);
-                else
-                    res.json(books);
-            });
-        });
-
-
-    bookRouter.use('/:bookId', function(req, res, next){
-        Book.findById(req.params.bookId, function(err, book){
+    bookRouter.use('/:bookId', function(req,res,next){
+        Book.findById(req.params.bookId, function(err,book){
             if(err)
                 res.status(500).send(err);
             else if(book)
@@ -41,17 +20,17 @@ var routes = function(Book){
             }
             else
             {
-                res.status(404).send('No Book Found!');
+                res.status(404).send('no book found');
             }
         });
     });
     bookRouter.route('/:bookId')
-        .get(function(req, res){
+        .get(function(req,res){
 
             res.json(req.book);
 
         })
-        .put(function(req, res){
+        .put(function(req,res){
             req.book.title = req.body.title;
             req.book.author = req.body.author;
             req.book.genre = req.body.genre;
@@ -64,7 +43,7 @@ var routes = function(Book){
                 }
             });
         })
-        .patch(function(req, res){
+        .patch(function(req,res){
             if(req.body._id)
                 delete req.body._id;
 
@@ -72,7 +51,7 @@ var routes = function(Book){
             {
                 req.book[p] = req.body[p];
             }
-            
+
             req.book.save(function(err){
                 if(err)
                     res.status(500).send(err);
@@ -81,7 +60,7 @@ var routes = function(Book){
                 }
             });
         })
-        .delete(function(req, res){
+        .delete(function(req,res){
             req.book.remove(function(err){
                 if(err)
                     res.status(500).send(err);
